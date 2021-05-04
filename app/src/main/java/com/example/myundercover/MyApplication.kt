@@ -7,7 +7,7 @@ import org.koin.core.context.startKoin
 import org.koin.dsl.module
 
 val myModule = module {
-    viewModel { GameViewModel() }
+    viewModel { HomeViewModel() }
 }
 
 class MyApplication: Application() {

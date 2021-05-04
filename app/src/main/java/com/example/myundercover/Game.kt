@@ -2,12 +2,12 @@ package com.example.myundercover
 
 import io.uniflow.core.flow.data.UIState
 
-sealed class GameState: UIState()
-object SelectCard: GameState()
+sealed class GameStep
+object SelectCard: GameStep()
 data class End(val winnerRole: Role)
-data class ShowCard(val player: Player): GameState()
-data class NewTurn(val playerTurn: Player): GameState()
-data class killPlayer(val player: Player): GameState()
+data class ShowCard(val player: Player): GameStep()
+data class NewTurn(val playerTurn: Player): GameStep()
+data class killPlayer(val player: Player): GameStep()
 
 class Game(var players: List<Player>) {
     lateinit var winner: Role

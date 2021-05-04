@@ -6,20 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.myundercover.databinding.FragmentGameBinding
 import io.uniflow.android.AndroidDataFlow
 import io.uniflow.android.livedata.onStates
 import io.uniflow.core.flow.data.UIState
 import kotlinx.coroutines.delay
 import org.koin.android.ext.android.inject
-import splitties.views.onClick
 
-sealed class myState: UIState()
-object Idle: myState()
-object Loading: myState()
-data class Result(val data: String): myState()
-
+sealed class GameState: UIState()
+object Idle: GameState()
+object Loading: GameState()
+data class Result(val data: String): GameState()
 
 class GameViewModel: AndroidDataFlow() {
 
@@ -42,6 +40,7 @@ class GameFragment: Fragment() {
 
     val GameViewModel: GameViewModel by inject()
 
+    private val args by navArgs<GameFragmentArgs>()
     lateinit var binding: FragmentGameBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -51,7 +50,7 @@ class GameFragment: Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        onStates(GameViewModel) { state ->
+/*        onStates(GameViewModel) { state ->
             when (state) {
                 is Idle -> {
                     binding.counter.isVisible = false
@@ -72,16 +71,11 @@ class GameFragment: Fragment() {
 
                 }
             }
-        }
+        }*/
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.clickMe.onClick {
-            GameViewModel.click()
-        }
-        binding.goToNextPage.onClick {
-            findNavController().navigate(GameFragmentDirections.launchSelectPlayersFragment("Salut les moches"))
-        }
+        binding.nbPlayer.text = "There is ${args.nbPlayers} players."
     }
 }
