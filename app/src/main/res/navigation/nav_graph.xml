@@ -6,5 +6,17 @@
     <fragment
         android:id="@+id/gameFragment"
         android:name="com.example.myundercover.GameFragment"
-        android:label="GameFragment" />
+        android:label="GameFragment" >
+        <action
+            android:id="@+id/launch_selectPlayersFragment"
+            app:destination="@id/selectPlayersFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/selectPlayersFragment"
+        android:name="com.example.myundercover.SelectPlayersFragment"
+        android:label="SelectPlayersFragment" >
+        <argument
+            android:name="sampleData"
+            app:argType="string" />
+    </fragment>
 </navigation>
