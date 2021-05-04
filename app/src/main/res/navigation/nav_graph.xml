@@ -19,4 +19,8 @@
             android:name="sampleData"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/cardFragment"
+        android:name="com.example.myundercover.CardFragment"
+        android:label="CardFragment" />
 </navigation>

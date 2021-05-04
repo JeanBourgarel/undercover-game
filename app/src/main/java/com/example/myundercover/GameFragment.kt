@@ -15,10 +15,10 @@ import kotlinx.coroutines.delay
 import org.koin.android.ext.android.inject
 import splitties.views.onClick
 
-sealed class GameState: UIState()
-object Idle: GameState()
-object Loading: GameState()
-data class Result(val data: String): GameState()
+sealed class myState: UIState()
+object Idle: myState()
+object Loading: myState()
+data class Result(val data: String): myState()
 
 
 class GameViewModel: AndroidDataFlow() {
