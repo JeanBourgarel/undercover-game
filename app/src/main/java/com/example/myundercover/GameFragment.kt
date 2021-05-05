@@ -70,14 +70,13 @@ class GameFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.nbPlayer.text = "There is ${args.nbPlayers} players."
         recyclerViewPlayerCards = binding.recyclerViewCards
-        gridLayoutManager = GridLayoutManager(context, 4, LinearLayoutManager.VERTICAL, false)
+        gridLayoutManager = GridLayoutManager(context, 3, LinearLayoutManager.VERTICAL, false)
         recyclerViewPlayerCards?.layoutManager = gridLayoutManager
         recyclerViewPlayerCards?.setHasFixedSize(true)
         arrayListPlayerCard = ArrayList()
         repeat(args.nbPlayers) {
-            arrayListPlayerCard?.add(PlayerCard(R.drawable.ic_launcher_background, "test"))
+            arrayListPlayerCard?.add(PlayerCard(R.mipmap.ic_unknown_face, "player name"))
         }
         playerCardAdapter = PlayerCardAdapter(arrayListPlayerCard!!, requireContext())
         recyclerViewPlayerCards?.adapter = playerCardAdapter
