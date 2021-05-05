@@ -1,12 +1,16 @@
 package com.example.myundercover
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.myundercover.adapters.PlayerCardAdapter
 import com.example.myundercover.databinding.FragmentGameBinding
 import io.uniflow.android.AndroidDataFlow
 import io.uniflow.android.livedata.onStates
@@ -14,18 +18,13 @@ import io.uniflow.core.flow.data.UIState
 import kotlinx.coroutines.delay
 import org.koin.android.ext.android.inject
 
-sealed class GameStep: UIState()
-object SelectCard: GameStep()
-data class End(val winnerRole: Role)
-data class ShowCard(val player: Player): GameStep()
-data class NewTurn(val playerTurn: Player): GameStep()
-data class killPlayer(val player: Player): GameStep()
-
-
 sealed class GameState: UIState()
-object Idle: GameState()
-object Loading: GameState()
-data class Result(val data: String): GameState()
+object SelectCard: GameState()
+data class End(val winnerRole: Role): GameState()
+data class ShowCard(val player: Player): GameState()
+data class NewTurn(val playerTurn: Player): GameState()
+data class killPlayer(val player: Player): GameState()
+
 
 class GameViewModel: AndroidDataFlow() {
 
@@ -40,23 +39,19 @@ class GameViewModel: AndroidDataFlow() {
             setState(ShowCard(player))
         }
     }
-
-    fun click() {
-        action {
-            setState(Loading)
-            delay(3000)
-            setState(Result("Hello world"))
-        }
-    }
 }
 
 class GameFragment: Fragment() {
 
     val GameViewModel: GameViewModel by inject()
-
     private val args by navArgs<GameFragmentArgs>()
     lateinit var binding: FragmentGameBinding
     lateinit var game: Game
+
+    private var recyclerViewPlayerCards: RecyclerView? = null
+    private var gridLayoutManager: GridLayoutManager? = null
+    private var arrayListPlayerCard: ArrayList<PlayerCard>? = null
+    private var playerCardAdapter: PlayerCardAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentGameBinding.inflate(inflater)
@@ -65,32 +60,26 @@ class GameFragment: Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-/*        onStates(GameViewModel) { state ->
+        onStates(GameViewModel) { state ->
             when (state) {
-                is Idle -> {
-                    binding.counter.isVisible = false
-                    binding.loader.isVisible = false
-                    binding.clickMe.isVisible = true
-                }
-                is Loading -> {
-                    binding.counter.isVisible = false
-                    binding.loader.isVisible = true
-                    binding.clickMe.isVisible = false
-                }
-                is Result -> {
-                    binding.counter.isVisible = true
-                    binding.loader.isVisible = false
-                    binding.clickMe.isVisible = false
-
-                    binding.counter.text = state.data
-
+                is SelectCard -> {
                 }
             }
-        }*/
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.nbPlayer.text = "There is ${args.nbPlayers} players."
+        recyclerViewPlayerCards = binding.recyclerViewCards
+        gridLayoutManager = GridLayoutManager(context, 4, LinearLayoutManager.VERTICAL, false)
+        recyclerViewPlayerCards?.layoutManager = gridLayoutManager
+        recyclerViewPlayerCards?.setHasFixedSize(true)
+        arrayListPlayerCard = ArrayList()
+        repeat(args.nbPlayers) {
+            arrayListPlayerCard?.add(PlayerCard(R.drawable.ic_launcher_background, "test"))
+        }
+        playerCardAdapter = PlayerCardAdapter(arrayListPlayerCard!!, requireContext())
+        recyclerViewPlayerCards?.adapter = playerCardAdapter
     }
 }
