@@ -38,6 +38,7 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.cardview:cardview:1.0.0'
     def nav_version = "2.3.5"
     def koin_version= "3.0.1"
     def uniflow_version = "1.0.5"
