@@ -14,6 +14,14 @@ import io.uniflow.core.flow.data.UIState
 import kotlinx.coroutines.delay
 import org.koin.android.ext.android.inject
 
+sealed class GameStep: UIState()
+object SelectCard: GameStep()
+data class End(val winnerRole: Role)
+data class ShowCard(val player: Player): GameStep()
+data class NewTurn(val playerTurn: Player): GameStep()
+data class killPlayer(val player: Player): GameStep()
+
+
 sealed class GameState: UIState()
 object Idle: GameState()
 object Loading: GameState()
@@ -23,7 +31,13 @@ class GameViewModel: AndroidDataFlow() {
 
     init {
         action {
-            setState(Idle)
+            setState(SelectCard)
+        }
+    }
+
+    fun clickOnCard(player: Player) {
+        action {
+            setState(ShowCard(player))
         }
     }
 
@@ -42,6 +56,7 @@ class GameFragment: Fragment() {
 
     private val args by navArgs<GameFragmentArgs>()
     lateinit var binding: FragmentGameBinding
+    lateinit var game: Game
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentGameBinding.inflate(inflater)

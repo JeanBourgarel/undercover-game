@@ -2,4 +2,5 @@
     <string name="app_name">My Undercover</string>
     <string name="new_game">New game</string>
     <string name="start_game">Start game</string>
+    <string name="please_select_a_number_of_player_for_the_game">Please select a number of player for the game</string>
 </resources>

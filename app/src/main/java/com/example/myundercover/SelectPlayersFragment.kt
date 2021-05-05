@@ -30,7 +30,7 @@ class SelectPlayersFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.numberPicker.maxValue = 15
-        binding.numberPicker.minValue = 4
+        binding.numberPicker.minValue = 5
         binding.startGame.onClick {
             findNavController().navigate(SelectPlayersFragmentDirections.launchGameFragment(binding.numberPicker.value))
         }
