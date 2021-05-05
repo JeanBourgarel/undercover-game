@@ -1,4 +1,4 @@
-package com.example.myundercover
+package com.example.myundercover.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.example.myundercover.fragments.HomeFragmentDirections
 import com.example.myundercover.databinding.FragmentHomeBinding
 import io.uniflow.android.AndroidDataFlow
 import org.koin.android.ext.android.inject

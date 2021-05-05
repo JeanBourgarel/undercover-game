@@ -1,4 +1,4 @@
-package com.example.myundercover
+package com.example.myundercover.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater

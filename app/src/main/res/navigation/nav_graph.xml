@@ -5,7 +5,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.myundercover.HomeFragment"
+        android:name="com.example.myundercover.fragments.HomeFragment"
         android:label="GameFragment" >
         <action
             android:id="@+id/launch_selectPlayersFragment"
@@ -13,7 +13,7 @@
     </fragment>
     <fragment
         android:id="@+id/selectPlayersFragment"
-        android:name="com.example.myundercover.SelectPlayersFragment"
+        android:name="com.example.myundercover.fragments.SelectPlayersFragment"
         android:label="SelectPlayersFragment" >
         <action
             android:id="@+id/launch_gameFragment"
@@ -21,7 +21,7 @@
     </fragment>
     <fragment
         android:id="@+id/gameFragment"
-        android:name="com.example.myundercover.GameFragment"
+        android:name="com.example.myundercover.fragments.GameFragment"
         android:label="GameFragment" >
         <argument
             android:name="nb_players"
@@ -29,6 +29,6 @@
     </fragment>
     <fragment
         android:id="@+id/cardFragment"
-        android:name="com.example.myundercover.CardFragment"
+        android:name="com.example.myundercover.fragments.CardFragment"
         android:label="CardFragment" />
 </navigation>

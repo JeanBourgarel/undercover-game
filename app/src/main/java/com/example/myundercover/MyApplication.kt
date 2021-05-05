@@ -1,6 +1,8 @@
 package com.example.myundercover
 
 import android.app.Application
+import com.example.myundercover.fragments.GameViewModel
+import com.example.myundercover.fragments.HomeViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
