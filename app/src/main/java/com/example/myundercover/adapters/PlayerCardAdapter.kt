@@ -25,7 +25,7 @@ class PlayerCardAdapter(val playerCards: ArrayList<PlayerCard>, val context: Con
 
     override fun onBindViewHolder(holder: PlayerCardHolder, position: Int) {
         val playerCard = playerCards[position]
-        
+            
         holder.icon.setImageResource(playerCard.icon!!)
         holder.name.text = playerCard.name
     }
