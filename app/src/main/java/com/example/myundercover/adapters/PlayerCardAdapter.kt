@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myundercover.PlayerCard
 import com.example.myundercover.R
+import com.example.myundercover.databinding.FragmentHomeBinding
 
 
 class PlayerCardAdapter(val playerCards: ArrayList<PlayerCard>, val context: Context, val listener: ICardRecycler) : RecyclerView.Adapter<PlayerCardHolder>() {
@@ -30,11 +31,11 @@ class PlayerCardAdapter(val playerCards: ArrayList<PlayerCard>, val context: Con
         holder.icon.setImageResource(playerCard.icon!!)
         holder.name.text = playerCard.name
         holder.itemView.setOnClickListener {
-            holder.listener.clickOnCard()
+            holder.listener.clickOnCard(holder)
         }
     }
     interface ICardRecycler {
-        fun clickOnCard()
+        fun clickOnCard(holder: PlayerCardHolder)
     }
 }
 

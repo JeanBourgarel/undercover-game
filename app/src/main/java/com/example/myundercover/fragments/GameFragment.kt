@@ -7,12 +7,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myundercover.*
 import com.example.myundercover.adapters.PlayerCardAdapter
+import com.example.myundercover.adapters.PlayerCardHolder
 import com.example.myundercover.databinding.FragmentGameBinding
 import io.uniflow.android.AndroidDataFlow
 import io.uniflow.android.livedata.onStates
@@ -20,6 +22,7 @@ import io.uniflow.core.flow.data.UIState
 import org.koin.android.ext.android.inject
 
 sealed class GameState: UIState()
+object Start: GameState()
 object SelectCard: GameState()
 data class End(val winnerRole: Role): GameState()
 data class ShowCard(val player: Player): GameState()
@@ -70,7 +73,7 @@ class GameFragment: Fragment(), PlayerCardAdapter.ICardRecycler {
         super.onCreate(savedInstanceState)
         onStates(GameViewModel) { state ->
             when (state) {
-                is SelectCard -> {
+                is Start -> {
                 }
             }
         }
@@ -86,14 +89,15 @@ class GameFragment: Fragment(), PlayerCardAdapter.ICardRecycler {
         repeat(args.nbPlayers) {
             arrayListPlayerCard?.add(PlayerCard(R.mipmap.ic_unknown_face, "player name"))
         }
+
         playerCardAdapter = PlayerCardAdapter(arrayListPlayerCard!!, requireContext(), this)
         recyclerViewPlayerCards?.adapter = playerCardAdapter
     }
 
-    override fun clickOnCard() {
-
+    override fun clickOnCard(holder: PlayerCardHolder) {
         val dialog = CardFragment()
-        dialog.show(childFragmentManager, "customDialog")
-        Toast.makeText(context, "click from game fragment", Toast.LENGTH_SHORT).show()
+        dialog.show(childFragmentManager, "cardFragment")
+        holder.name.text = "la biteasse"
+        Toast.makeText(context, "click on card", Toast.LENGTH_SHORT).show()
     }
 }

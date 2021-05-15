@@ -1,6 +1,6 @@
 package com.example.myundercover
 
-class Game(var players: List<Player>) {
+class Game(var players: List<Player>, val secretWord: String, val fakeWord: String) {
     lateinit var winner: Role
     fun killPlayer(player: Player) {
 

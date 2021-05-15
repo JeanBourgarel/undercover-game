@@ -7,22 +7,22 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.myundercover.databinding.FragmentCardBinding
+import com.example.myundercover.databinding.FragmentSecretWordBinding
 import io.uniflow.android.AndroidDataFlow
 import org.koin.android.ext.android.inject
 import splitties.views.onClick
 
-class CardViewModel: AndroidDataFlow() {
+class SecretWordViewModel: AndroidDataFlow() {
 
 }
 
-class CardFragment: DialogFragment() {
+class SecretWordFragment: DialogFragment() {
 
-    val CardViewModel: CardViewModel by inject()
-    lateinit var binding: FragmentCardBinding
+    val SecretWordViewModel: SecretWordViewModel by inject()
+    lateinit var binding: FragmentSecretWordBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentCardBinding.inflate(inflater)
+        binding = FragmentSecretWordBinding.inflate(inflater)
         return binding.root
     }
 
@@ -32,9 +32,5 @@ class CardFragment: DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.getSecretWordButton.setOnClickListener {
-            val dialog = SecretWordFragment()
-            dialog.show(childFragmentManager, "secretWordFragment")
-        }
     }
 }
