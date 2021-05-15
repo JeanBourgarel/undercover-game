@@ -121,12 +121,22 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
     }
 
     override fun clickOnCard(holder: PlayerCardHolder) {
-        println(game.players.size)
-        val args = Bundle()
-        args.putSerializable("cardHolder", holder)
-        args.putSerializable("game", game)
-        dialog.arguments = args
-        dialog.show(childFragmentManager, "cardFragment")
+        onStates(GameViewModel) { state ->
+            when (state) {
+                is SelectCards -> {
+                    if (holder.name.text.isBlank()) {
+                        val args = Bundle()
+                        args.putSerializable("cardHolder", holder)
+                        args.putSerializable("game", game)
+                        dialog.arguments = args
+                        dialog.show(childFragmentManager, "cardFragment")
+                    }
+                }
+                is Start -> {
+                    Toast.makeText(context, "Kill " + holder.name.text.toString() + " ?", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     override fun clickOnOk(updatedGame: Game, cardHolder: PlayerCardHolder, playerName: String) {

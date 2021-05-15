@@ -32,9 +32,7 @@ class PlayerCardAdapter(val playerCards: ArrayList<PlayerCard>, val context: Con
         holder.icon.setImageResource(playerCard.icon!!)
         holder.name.text = playerCard.name
         holder.itemView.setOnClickListener {
-            if (holder.name.text.isBlank()) {
-                holder.listener.clickOnCard(holder)
-            }
+            holder.listener.clickOnCard(holder)
         }
     }
 
