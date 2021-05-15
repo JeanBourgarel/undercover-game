@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
@@ -38,9 +39,16 @@ class GameViewModel: AndroidDataFlow() {
             setState(ShowCard(player))
         }
     }
+
+    fun selectPlayerToKill(player: Player) {
+        //display card are u sure
+        action {
+            killPlayer(player)
+        }
+    }
 }
 
-class GameFragment: Fragment() {
+class GameFragment: Fragment(), PlayerCardAdapter.ICardRecycler {
 
     val GameViewModel: GameViewModel by inject()
     private val args by navArgs<GameFragmentArgs>()
@@ -77,7 +85,11 @@ class GameFragment: Fragment() {
         repeat(args.nbPlayers) {
             arrayListPlayerCard?.add(PlayerCard(R.mipmap.ic_unknown_face, "player name"))
         }
-        playerCardAdapter = PlayerCardAdapter(arrayListPlayerCard!!, requireContext())
+        playerCardAdapter = PlayerCardAdapter(arrayListPlayerCard!!, requireContext(), this)
         recyclerViewPlayerCards?.adapter = playerCardAdapter
+    }
+
+    override fun clickOnCard() {
+        Toast.makeText(context, "click from game fragment", Toast.LENGTH_SHORT).show()
     }
 }

@@ -26,9 +26,14 @@
         <argument
             android:name="nb_players"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_gameFragment_to_cardFragment2"
+            app:destination="@id/cardFragment" />
     </fragment>
     <fragment
         android:id="@+id/cardFragment"
         android:name="com.example.myundercover.fragments.CardFragment"
-        android:label="CardFragment" />
+        android:label="CardFragment" >
+        <argument android:name="game" />
+    </fragment>
 </navigation>
