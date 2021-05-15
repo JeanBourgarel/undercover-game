@@ -1,8 +1,9 @@
 package com.example.myundercover
 
+import java.io.Serializable
 import java.util.Collections.shuffle
 
-class Game(val nbPlayers: Int) {
+class Game(val nbPlayers: Int): Serializable {
     var players: MutableList<Player> = mutableListOf()
     lateinit var winner: Role
     lateinit var secretWord: String
@@ -11,13 +12,15 @@ class Game(val nbPlayers: Int) {
 
     init {
         setRoles()
+        setWords()
     }
 
 
-    fun addPlayer(name: String, role: Role) {
+    fun addPlayer(name: String) {
+        val role = roles[0]
         val newPlayer = Player(name, role)
         players.add(newPlayer)
-
+        roles.removeFirst()
     }
 
     fun killPlayer(player: Player) {

@@ -92,17 +92,6 @@ class GameFragment: Fragment(), PlayerCardAdapter.ICardRecycler {
 
         game = Game(args.nbPlayers)
 
-        println("------------------------")
-        println(game.roles.size)
-        for (role in game.roles) {
-            if (role === Innocent)
-                println("Innocent")
-            if (role === Undercover)
-                println("Undercover")
-            if (role === MrWhite)
-                println("MrWhite")
-        }
-
 /*        for (player in game.players) {
             println(player.role)
             println(player.name)
@@ -114,8 +103,10 @@ class GameFragment: Fragment(), PlayerCardAdapter.ICardRecycler {
 
     override fun clickOnCard(holder: PlayerCardHolder) {
         val dialog = CardFragment()
+        val args = Bundle()
+        args.putSerializable("game", game)
+        dialog.arguments = args
         dialog.show(childFragmentManager, "cardFragment")
-        holder.name.text = "la biteasse"
         Toast.makeText(context, "click on card", Toast.LENGTH_SHORT).show()
     }
 }
