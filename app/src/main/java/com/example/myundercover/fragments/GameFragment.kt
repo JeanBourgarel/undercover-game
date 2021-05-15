@@ -23,7 +23,7 @@ import org.koin.android.ext.android.inject
 
 sealed class GameState : UIState()
 object Start : GameState()
-object SelectCard : GameState()
+data class SelectCards(val playerNb: Int) : GameState()
 data class End(val winnerRole: Role) : GameState()
 data class ShowCard(val player: Player) : GameState()
 data class NewTurn(val playerTurn: Player) : GameState()
@@ -34,7 +34,7 @@ class GameViewModel : AndroidDataFlow() {
 
     init {
         action {
-            setState(SelectCard)
+            setState(SelectCards(1))
         }
     }
 
@@ -48,6 +48,18 @@ class GameViewModel : AndroidDataFlow() {
         //display card are u sure
         action {
             killPlayer(player)
+        }
+    }
+
+    fun endGame(game: Game) {
+        action {
+            setState(End(game.winner))
+        }
+    }
+
+    fun selectCards(playerNb: Int) {
+        action {
+            setState(SelectCards(playerNb))
         }
     }
 
@@ -65,6 +77,7 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
     lateinit var binding: FragmentGameBinding
     lateinit var game: Game
     val dialog = CardFragment(this)
+    var playerNb = 0
 
     private var recyclerViewPlayerCards: RecyclerView? = null
     private var gridLayoutManager: GridLayoutManager? = null
@@ -80,8 +93,12 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
         super.onCreate(savedInstanceState)
         onStates(GameViewModel) { state ->
             when (state) {
+                is SelectCards -> {
+                    val newText = getString(R.string.player) + " " + state.playerNb + " " + getString(R.string.choose_a_card)
+                    binding.nbPlayer.text = newText
+                }
                 is Start -> {
-                    binding.nbPlayer.text = "Le jeu a commencé"
+                    binding.nbPlayer.text = getString(R.string.game_has_started)
                 }
             }
         }
@@ -89,14 +106,15 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        playerNb = args.nbPlayers
         game = Game(args.nbPlayers)
         recyclerViewPlayerCards = binding.recyclerViewCards
         gridLayoutManager = GridLayoutManager(context, 3, LinearLayoutManager.VERTICAL, false)
         recyclerViewPlayerCards?.layoutManager = gridLayoutManager
         recyclerViewPlayerCards?.setHasFixedSize(true)
         arrayListPlayerCard = ArrayList()
-        repeat(args.nbPlayers) {
-            arrayListPlayerCard?.add(PlayerCard(R.mipmap.ic_unknown_face, "player name"))
+        repeat(playerNb) {
+            arrayListPlayerCard?.add(PlayerCard(R.mipmap.ic_unknown_face, ""))
         }
         playerCardAdapter = PlayerCardAdapter(arrayListPlayerCard!!, requireContext(), this)
         recyclerViewPlayerCards?.adapter = playerCardAdapter
@@ -117,6 +135,8 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
         if (game.roles.size == 0) {
             GameViewModel.startGame(game)
             Toast.makeText(context, "Game can start", Toast.LENGTH_SHORT).show()
+        } else {
+            GameViewModel.selectCards(game.players.size + 1)
         }
         dialog.dismiss()
     }

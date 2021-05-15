@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myundercover.PlayerCard
 import com.example.myundercover.R
+import com.example.myundercover.fragments.GameViewModel
 import java.io.Serializable
 
 
@@ -31,7 +32,9 @@ class PlayerCardAdapter(val playerCards: ArrayList<PlayerCard>, val context: Con
         holder.icon.setImageResource(playerCard.icon!!)
         holder.name.text = playerCard.name
         holder.itemView.setOnClickListener {
-            holder.listener.clickOnCard(holder)
+            if (holder.name.text.isBlank()) {
+                holder.listener.clickOnCard(holder)
+            }
         }
     }
 
@@ -41,10 +44,6 @@ class PlayerCardAdapter(val playerCards: ArrayList<PlayerCard>, val context: Con
 }
 
 class PlayerCardHolder(val view: View, val context: Context, val listener: PlayerCardAdapter.ICardRecycler) : RecyclerView.ViewHolder(view), Serializable {
-    val click = itemView.setOnClickListener {
-//        Toast.makeText(context, "Select name", Toast.LENGTH_SHORT).show()
-        //display view
-    }
     var icon = itemView.findViewById<ImageView>(R.id.icon_player_card)
     var name = itemView.findViewById<TextView>(R.id.player_name)
 }

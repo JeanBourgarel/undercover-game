@@ -10,4 +10,7 @@
     <string name="ok">OK</string>
     <string name="dont_get_caught">Don\'t get caught</string>
     <string name="you_are_the_mr_white">You are the Mr White</string>
+    <string name="game_has_started">Game has started</string>
+    <string name="player">Player</string>
+    <string name="choose_a_card">choose a card</string>
 </resources>
