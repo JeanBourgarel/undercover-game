@@ -119,7 +119,7 @@ class GameFragment: Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFragm
         for (player in game.players) {
             println("-------------------------")
             println(player.name)
-            println("-------------------------")
+            println(player.role)
         }
     }
 }

@@ -37,6 +37,7 @@ class SecretWordFragment(val listener: ISecretWord): DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         val game = arguments?.getSerializable("game") as Game;
         val playerName = arguments?.getString("playerName") as String;
+
         binding.secretWord.text = game.secretWord
         binding.okButton.setOnClickListener {
             game.addPlayer(playerName)

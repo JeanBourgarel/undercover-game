@@ -35,8 +35,8 @@ class CardFragment(val listener: SecretWordFragment.ISecretWord): DialogFragment
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val game = arguments?.getSerializable("game") as Game;
-        val playerName = binding.nameEditText.text.toString()
         binding.getSecretWordButton.setOnClickListener {
+            val playerName = binding.nameEditText.text.toString()
             val dialog = SecretWordFragment(listener)
             val args = Bundle()
             args.putSerializable("game", game)
