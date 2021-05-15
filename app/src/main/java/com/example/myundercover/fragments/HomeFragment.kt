@@ -19,7 +19,6 @@ class HomeViewModel: AndroidDataFlow() {
 class HomeFragment: Fragment() {
 
     val HomeViewModel: HomeViewModel by inject()
-
     lateinit var binding: FragmentHomeBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
