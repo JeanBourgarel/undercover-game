@@ -5,7 +5,6 @@ object Innocent: Role()
 object MrWhite: Role()
 object Undercover: Role()
 
-class Player(var name: String, var role: Role, var alive: Boolean) {
-    init {
-    }
+class Player(var name: String, var role: Role) {
+    var alive: Boolean = true
 }

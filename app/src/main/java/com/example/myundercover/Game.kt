@@ -1,16 +1,42 @@
 package com.example.myundercover
 
-class Game(var players: List<Player>, val secretWord: String, val fakeWord: String) {
+import java.util.Collections.shuffle
+
+class Game(val nbPlayers: Int) {
+    var players: MutableList<Player> = mutableListOf()
     lateinit var winner: Role
+    lateinit var secretWord: String
+    lateinit var fakeWord: String
+    var roles: MutableList<Role> = mutableListOf()
+
+    init {
+        setRoles()
+    }
+
+
+    fun addPlayer(name: String, role: Role) {
+        val newPlayer = Player(name, role)
+        players.add(newPlayer)
+
+    }
+
     fun killPlayer(player: Player) {
 
     }
 
-    fun setRoles() {
-        val shuffledPlayers = players.shuffled()
-        shuffledPlayers[0].role = MrWhite
-        shuffledPlayers[1].role = Undercover
-        players = shuffledPlayers
+    fun setWords() {
+        secretWord = "Dog"
+        fakeWord = "Cat"
+    }
+
+    private fun setRoles() {
+        val nbInnocent = nbPlayers - 2
+        repeat(nbInnocent) {
+            roles.add(Innocent)
+        }
+        roles.add(MrWhite)
+        roles.add(Undercover)
+        shuffle(roles)
     }
 
     fun getWinner() {

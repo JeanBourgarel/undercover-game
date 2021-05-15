@@ -90,6 +90,24 @@ class GameFragment: Fragment(), PlayerCardAdapter.ICardRecycler {
             arrayListPlayerCard?.add(PlayerCard(R.mipmap.ic_unknown_face, "player name"))
         }
 
+        game = Game(args.nbPlayers)
+
+        println("------------------------")
+        println(game.roles.size)
+        for (role in game.roles) {
+            if (role === Innocent)
+                println("Innocent")
+            if (role === Undercover)
+                println("Undercover")
+            if (role === MrWhite)
+                println("MrWhite")
+        }
+
+/*        for (player in game.players) {
+            println(player.role)
+            println(player.name)
+        }
+*/
         playerCardAdapter = PlayerCardAdapter(arrayListPlayerCard!!, requireContext(), this)
         recyclerViewPlayerCards?.adapter = playerCardAdapter
     }
