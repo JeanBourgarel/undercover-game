@@ -21,16 +21,16 @@ import io.uniflow.android.livedata.onStates
 import io.uniflow.core.flow.data.UIState
 import org.koin.android.ext.android.inject
 
-sealed class GameState: UIState()
-object Start: GameState()
-object SelectCard: GameState()
-data class End(val winnerRole: Role): GameState()
-data class ShowCard(val player: Player): GameState()
-data class NewTurn(val playerTurn: Player): GameState()
-data class killPlayer(val player: Player): GameState()
+sealed class GameState : UIState()
+object Start : GameState()
+object SelectCard : GameState()
+data class End(val winnerRole: Role) : GameState()
+data class ShowCard(val player: Player) : GameState()
+data class NewTurn(val playerTurn: Player) : GameState()
+data class killPlayer(val player: Player) : GameState()
 
 
-class GameViewModel: AndroidDataFlow() {
+class GameViewModel : AndroidDataFlow() {
 
     init {
         action {
@@ -50,9 +50,15 @@ class GameViewModel: AndroidDataFlow() {
             killPlayer(player)
         }
     }
+
+    fun startGame(game: Game) {
+        action {
+            setState(Start)
+        }
+    }
 }
 
-class GameFragment: Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFragment.ISecretWord {
+class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFragment.ISecretWord {
 
     val GameViewModel: GameViewModel by inject()
     private val args by navArgs<GameFragmentArgs>()
@@ -75,6 +81,7 @@ class GameFragment: Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFragm
         onStates(GameViewModel) { state ->
             when (state) {
                 is Start -> {
+                    binding.nbPlayer.text = "Le jeu a commencé"
                 }
             }
         }
@@ -82,6 +89,7 @@ class GameFragment: Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFragm
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        game = Game(args.nbPlayers)
         recyclerViewPlayerCards = binding.recyclerViewCards
         gridLayoutManager = GridLayoutManager(context, 3, LinearLayoutManager.VERTICAL, false)
         recyclerViewPlayerCards?.layoutManager = gridLayoutManager
@@ -90,14 +98,6 @@ class GameFragment: Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFragm
         repeat(args.nbPlayers) {
             arrayListPlayerCard?.add(PlayerCard(R.mipmap.ic_unknown_face, "player name"))
         }
-
-        game = Game(args.nbPlayers)
-
-        for (player in game.players) {
-            println(player.role)
-            println(player.name)
-        }
-
         playerCardAdapter = PlayerCardAdapter(arrayListPlayerCard!!, requireContext(), this)
         recyclerViewPlayerCards?.adapter = playerCardAdapter
     }
@@ -105,21 +105,19 @@ class GameFragment: Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFragm
     override fun clickOnCard(holder: PlayerCardHolder) {
         println(game.players.size)
         val args = Bundle()
+        args.putSerializable("cardHolder", holder)
         args.putSerializable("game", game)
         dialog.arguments = args
         dialog.show(childFragmentManager, "cardFragment")
-        Toast.makeText(context, "click on card", Toast.LENGTH_SHORT).show()
     }
 
-    override fun clickOnOk(updatedGame: Game) {
-        println("OKKKKKKKKKKKK")
+    override fun clickOnOk(updatedGame: Game, cardHolder: PlayerCardHolder, playerName: String) {
+        cardHolder.name.text = playerName
         game = updatedGame
-        dialog.dismiss()
-        println(game.players.size)
-        for (player in game.players) {
-            println("-------------------------")
-            println(player.name)
-            println(player.role)
+        if (game.roles.size == 0) {
+            GameViewModel.startGame(game)
+            Toast.makeText(context, "Game can start", Toast.LENGTH_SHORT).show()
         }
+        dialog.dismiss()
     }
 }

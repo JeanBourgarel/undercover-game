@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.myundercover.Game
 import com.example.myundercover.adapters.PlayerCardAdapter
+import com.example.myundercover.adapters.PlayerCardHolder
 import com.example.myundercover.databinding.FragmentCardBinding
 import io.uniflow.android.AndroidDataFlow
 import org.koin.android.ext.android.inject
@@ -35,11 +36,14 @@ class CardFragment(val listener: SecretWordFragment.ISecretWord): DialogFragment
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val game = arguments?.getSerializable("game") as Game;
+        val cardHolder = arguments?.getSerializable("cardHolder") as PlayerCardHolder;
         binding.getSecretWordButton.setOnClickListener {
             val playerName = binding.nameEditText.text.toString()
             val dialog = SecretWordFragment(listener)
             val args = Bundle()
+            game.addPlayer(playerName)
             args.putSerializable("game", game)
+            args.putSerializable("cardHolder", cardHolder)
             args.putString("playerName", playerName)
             dialog.arguments = args
             dialog.show(childFragmentManager, "secretWordFragment")

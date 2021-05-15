@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.myundercover.Game
+import com.example.myundercover.*
 import com.example.myundercover.adapters.PlayerCardAdapter
 import com.example.myundercover.adapters.PlayerCardHolder
 import com.example.myundercover.databinding.FragmentSecretWordBinding
@@ -36,17 +36,28 @@ class SecretWordFragment(val listener: ISecretWord): DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val game = arguments?.getSerializable("game") as Game;
+        val cardHolder = arguments?.getSerializable("cardHolder") as PlayerCardHolder;
         val playerName = arguments?.getString("playerName") as String;
 
-        binding.secretWord.text = game.secretWord
+        when (game.players.last().role) {
+            is Innocent -> {
+                binding.secretWord.text = game.secretWord
+            }
+            is MrWhite -> {
+                binding.yourSecretWordIsTextView.text = getString(R.string.you_are_the_mr_white)
+                binding.secretWord.text = getString(R.string.dont_get_caught)
+            }
+            is Undercover -> {
+                binding.secretWord.text = game.fakeWord
+            }
+        }
         binding.okButton.setOnClickListener {
-            game.addPlayer(playerName)
-            listener.clickOnOk(game)
+            listener.clickOnOk(game, cardHolder, playerName)
             dismiss()
         }
     }
 
     interface ISecretWord {
-        fun clickOnOk(updatedGame: Game)
+        fun clickOnOk(updatedGame: Game, cardHolder: PlayerCardHolder, playerName: String)
     }
 }
