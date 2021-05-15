@@ -52,12 +52,13 @@ class GameViewModel: AndroidDataFlow() {
     }
 }
 
-class GameFragment: Fragment(), PlayerCardAdapter.ICardRecycler {
+class GameFragment: Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFragment.ISecretWord {
 
     val GameViewModel: GameViewModel by inject()
     private val args by navArgs<GameFragmentArgs>()
     lateinit var binding: FragmentGameBinding
     lateinit var game: Game
+    val dialog = CardFragment(this)
 
     private var recyclerViewPlayerCards: RecyclerView? = null
     private var gridLayoutManager: GridLayoutManager? = null
@@ -92,21 +93,33 @@ class GameFragment: Fragment(), PlayerCardAdapter.ICardRecycler {
 
         game = Game(args.nbPlayers)
 
-/*        for (player in game.players) {
+        for (player in game.players) {
             println(player.role)
             println(player.name)
         }
-*/
+
         playerCardAdapter = PlayerCardAdapter(arrayListPlayerCard!!, requireContext(), this)
         recyclerViewPlayerCards?.adapter = playerCardAdapter
     }
 
     override fun clickOnCard(holder: PlayerCardHolder) {
-        val dialog = CardFragment()
+        println(game.players.size)
         val args = Bundle()
         args.putSerializable("game", game)
         dialog.arguments = args
         dialog.show(childFragmentManager, "cardFragment")
         Toast.makeText(context, "click on card", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun clickOnOk(updatedGame: Game) {
+        println("OKKKKKKKKKKKK")
+        game = updatedGame
+        dialog.dismiss()
+        println(game.players.size)
+        for (player in game.players) {
+            println("-------------------------")
+            println(player.name)
+            println("-------------------------")
+        }
     }
 }

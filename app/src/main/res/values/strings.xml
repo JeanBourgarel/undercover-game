@@ -7,4 +7,5 @@
     <string name="enter_your_name_here">Enter your name here</string>
     <string name="get_my_secret_word">Get my secret word</string>
     <string name="your_secret_word_is">Your secret word is:</string>
+    <string name="ok">OK</string>
 </resources>

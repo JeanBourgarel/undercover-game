@@ -7,6 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.example.myundercover.Game
+import com.example.myundercover.adapters.PlayerCardAdapter
+import com.example.myundercover.adapters.PlayerCardHolder
 import com.example.myundercover.databinding.FragmentSecretWordBinding
 import io.uniflow.android.AndroidDataFlow
 import org.koin.android.ext.android.inject
@@ -16,7 +19,7 @@ class SecretWordViewModel: AndroidDataFlow() {
 
 }
 
-class SecretWordFragment: DialogFragment() {
+class SecretWordFragment(val listener: ISecretWord): DialogFragment() {
 
     val SecretWordViewModel: SecretWordViewModel by inject()
     lateinit var binding: FragmentSecretWordBinding
@@ -32,6 +35,17 @@ class SecretWordFragment: DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.secretWord
+        val game = arguments?.getSerializable("game") as Game;
+        val playerName = arguments?.getString("playerName") as String;
+        binding.secretWord.text = game.secretWord
+        binding.okButton.setOnClickListener {
+            game.addPlayer(playerName)
+            listener.clickOnOk(game)
+            dismiss()
+        }
+    }
+
+    interface ISecretWord {
+        fun clickOnOk(updatedGame: Game)
     }
 }
