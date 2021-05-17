@@ -6,8 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,8 +22,8 @@ import io.uniflow.core.flow.data.UIState
 import org.koin.android.ext.android.inject
 
 sealed class GameState : UIState()
-object Start : GameState()
-data class SelectCards(val playerNb: Int) : GameState()
+object Started : GameState()
+data class CardSelection(val playerNb: Int) : GameState()
 data class End(val winnerRole: Role) : GameState()
 data class ShowCard(val player: Player) : GameState()
 data class NewTurn(val playerTurn: Player) : GameState()
@@ -35,46 +33,36 @@ data class killPlayer(val player: Player) : GameState()
 sealed class GameEvent : UIEvent() {
     data class SelectNewCard(val holder: PlayerCardHolder) : GameEvent()
     data class SelectPlayerCard(val holder: PlayerCardHolder) : GameEvent()
-    data class Start(val game: Game) : GameEvent()
-    data class Success(val location: String) : GameEvent()
-    data class Failed(val location: String, val error: Throwable? = null) : GameEvent()
 }
 
 class GameViewModel : AndroidDataFlow() {
 
     init {
         action {
-            setState(SelectCards(1))
+            setState(CardSelection(1))
         }
     }
 
     fun clickOnCard(holder: PlayerCardHolder) = action { currentState ->
         when (currentState) {
-            is SelectCards -> {
+            is CardSelection -> {
                 sendEvent(GameEvent.SelectNewCard(holder))
             }
-            is Start -> {
+            is Started -> {
                 sendEvent(GameEvent.SelectPlayerCard(holder))
             }
         }
     }
 
-    fun clickOnNewCard(holder: PlayerCardHolder) {
-        action {
-            sendEvent(GameEvent.SelectNewCard(holder))
-        }
-    }
-
     fun selectCards(playerNb: Int) {
         action {
-            setState(SelectCards(playerNb))
+            setState(CardSelection(playerNb))
         }
     }
 
     fun startGame(game: Game) {
         action {
-            //sendEvent(GameEvent.Start(game))
-            setState(Start)
+            setState(Started)
         }
     }
 }
@@ -100,19 +88,20 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        playerNb = args.nbPlayers
+        game = Game(args.nbPlayers)
         onStates(GameViewModel) { state ->
             when (state) {
-                is SelectCards -> {
+                is CardSelection -> {
                     val newText = getString(R.string.player) + " " + state.playerNb + " " + getString(R.string.choose_a_card)
                     binding.nbPlayer.text = newText
                 }
-                is Start -> {
+                is Started -> {
                     binding.nbPlayer.text = getString(R.string.game_has_started)
                 }
             }
         }
         onEvents(GameViewModel) { event ->
-            Toast.makeText(context, event.toString(), Toast.LENGTH_SHORT).show()
             when (event) {
                 is GameEvent.SelectNewCard -> {
                     if (event.holder.name.text.isBlank()) {
@@ -132,8 +121,6 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        playerNb = args.nbPlayers
-        game = Game(args.nbPlayers)
         recyclerViewPlayerCards = binding.recyclerViewCards
         gridLayoutManager = GridLayoutManager(context, 3, LinearLayoutManager.VERTICAL, false)
         recyclerViewPlayerCards?.layoutManager = gridLayoutManager
