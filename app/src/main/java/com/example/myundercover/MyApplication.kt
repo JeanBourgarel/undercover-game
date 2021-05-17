@@ -4,6 +4,7 @@ import android.app.Application
 import com.example.myundercover.fragments.CardViewModel
 import com.example.myundercover.fragments.GameViewModel
 import com.example.myundercover.fragments.HomeViewModel
+import com.example.myundercover.fragments.KillPlayerCardViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
@@ -13,6 +14,7 @@ val myModule = module {
     viewModel { HomeViewModel() }
     viewModel { GameViewModel() }
     viewModel { CardViewModel() }
+    viewModel { KillPlayerCardViewModel() }
 }
 
 class MyApplication: Application() {

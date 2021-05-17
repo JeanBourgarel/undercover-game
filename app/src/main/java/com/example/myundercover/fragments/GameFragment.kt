@@ -1,11 +1,13 @@
 package com.example.myundercover.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,19 +22,31 @@ import io.uniflow.android.livedata.onStates
 import io.uniflow.core.flow.data.UIEvent
 import io.uniflow.core.flow.data.UIState
 import org.koin.android.ext.android.inject
+import androidx.navigation.fragment.findNavController
+import com.example.myundercover.fragments.HomeFragmentDirections
+import com.example.myundercover.databinding.FragmentHomeBinding
+import org.koin.android.ext.android.inject
+import splitties.views.onClick
+
 
 sealed class GameState : UIState()
 object Started : GameState()
+object InnocentWin: GameState()
+object InfiltrateWin: GameState()
 data class CardSelection(val playerNb: Int) : GameState()
-data class End(val winnerRole: Role) : GameState()
+data class Ended(val winnerRole: Role) : GameState()
 data class ShowCard(val player: Player) : GameState()
 data class NewTurn(val playerTurn: Player) : GameState()
-data class killPlayer(val player: Player) : GameState()
 
 
 sealed class GameEvent : UIEvent() {
     data class SelectNewCard(val holder: PlayerCardHolder) : GameEvent()
     data class SelectPlayerCard(val holder: PlayerCardHolder) : GameEvent()
+    data class KillPlayer(val holder: PlayerCardHolder) : GameEvent()
+    data class PlayerKilled(val role: Role) : GameEvent()
+    data class InnocentKilled(val playerName: String) : GameEvent()
+    data class UndercoverKilled(val playerName: String) : GameEvent()
+    data class MrWhiteKilled(val playerName: String) : GameEvent()
 }
 
 class GameViewModel : AndroidDataFlow() {
@@ -54,6 +68,18 @@ class GameViewModel : AndroidDataFlow() {
         }
     }
 
+    fun killPlayer(role: Role) {
+        action {
+            sendEvent(GameEvent.PlayerKilled(role))
+        }
+    }
+
+    fun endGame(winner: Role) {
+        action {
+            setState(Ended(winner))
+        }
+    }
+
     fun selectCards(playerNb: Int) {
         action {
             setState(CardSelection(playerNb))
@@ -67,13 +93,14 @@ class GameViewModel : AndroidDataFlow() {
     }
 }
 
-class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFragment.ISecretWord {
+class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFragment.ISecretWord, KillPlayerCardFragment.IKillPlayer {
 
     val GameViewModel: GameViewModel by inject()
     private val args by navArgs<GameFragmentArgs>()
     lateinit var binding: FragmentGameBinding
     lateinit var game: Game
-    val dialog = CardFragment(this)
+    val cardDialog = CardFragment(this)
+    val killPlayerCardDialog = KillPlayerCardFragment(this)
     var playerNb = 0
 
     private var recyclerViewPlayerCards: RecyclerView? = null
@@ -99,6 +126,20 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
                 is Started -> {
                     binding.nbPlayer.text = getString(R.string.game_has_started)
                 }
+                is Ended -> {
+                    when (state.winnerRole) {
+                        is Innocent -> {
+                            Toast.makeText(context, "The innocents has won the game", Toast.LENGTH_SHORT).show()
+                        }
+                        is Undercover -> {
+                            Toast.makeText(context, "The infiltrates has won the game", Toast.LENGTH_SHORT).show()
+                        }
+                        is MrWhite -> {
+                            Toast.makeText(context, "The infiltrates has won the game", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    findNavController().navigate(GameFragmentDirections.launchHomeFragment())
+                }
             }
         }
         onEvents(GameViewModel) { event ->
@@ -108,12 +149,29 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
                         val args = Bundle()
                         args.putSerializable("cardHolder", event.holder)
                         args.putSerializable("game", game)
-                        dialog.arguments = args
-                        dialog.show(childFragmentManager, "cardFragment")
+                        cardDialog.arguments = args
+                        cardDialog.show(childFragmentManager, "cardFragment")
                     }
                 }
                 is GameEvent.SelectPlayerCard -> {
-                    Toast.makeText(context, "Kill " + event.holder.name.text.toString() + " ?", Toast.LENGTH_SHORT).show()
+                    val args = Bundle()
+                    args.putSerializable("cardHolder", event.holder)
+                    args.putSerializable("game", game)
+                    killPlayerCardDialog.arguments = args
+                    killPlayerCardDialog.show(childFragmentManager, "killPlayerCardFragment")
+                }
+                is GameEvent.PlayerKilled -> {
+                    when (event.role) {
+                        is Innocent -> {
+                            Toast.makeText(context, "An innocent has been killed", Toast.LENGTH_SHORT).show()
+                        }
+                        is Undercover -> {
+                            Toast.makeText(context, "The undercover has been killed", Toast.LENGTH_SHORT).show()
+                        }
+                        is MrWhite -> {
+                            Toast.makeText(context, "The Mr White has been killed", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
             }
         }
@@ -146,6 +204,21 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
         } else {
             GameViewModel.selectCards(game.players.size + 1)
         }
-        dialog.dismiss()
+        cardDialog.dismiss()
+    }
+
+    override fun killPlayer(cardHolder: PlayerCardHolder) {
+        if (game.isPlayerAlive(cardHolder.name.text.toString())) {
+            val role = game.getRoleByName(cardHolder.name.text.toString())
+            game.killPlayerByName(cardHolder.name.text.toString())
+            if (role != null) {
+                GameViewModel.killPlayer(role)
+            }
+            cardHolder.icon.setImageResource(R.mipmap.ic_dead)
+            val winner = game.getWinner()
+            if (winner != null) {
+                GameViewModel.endGame(winner)
+            }
+        }
     }
 }

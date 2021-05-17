@@ -5,7 +5,6 @@ import java.util.Collections.shuffle
 
 class Game(val nbPlayers: Int): Serializable {
     var players: MutableList<Player> = mutableListOf()
-    lateinit var winner: Role
     lateinit var secretWord: String
     lateinit var fakeWord: String
     var roles: MutableList<Role> = mutableListOf()
@@ -15,6 +14,23 @@ class Game(val nbPlayers: Int): Serializable {
         setWords()
     }
 
+    fun isPlayerAlive(playerName: String): Boolean {
+        for (player in players) {
+            if (player.name == playerName) {
+                return player.alive
+            }
+        }
+        return true
+    }
+
+    fun getRoleByName(playerName: String): Role? {
+        for (player in players) {
+            if (player.name == playerName) {
+                return player.role
+            }
+        }
+        return null
+    }
 
     fun addPlayer(name: String) {
         val role = roles[0]
@@ -23,8 +39,13 @@ class Game(val nbPlayers: Int): Serializable {
         roles.removeFirst()
     }
 
-    fun killPlayer(player: Player) {
-
+    fun killPlayerByName(playerName: String) {
+        for (player in players) {
+            if (player.name == playerName) {
+                player.alive = false
+                break
+            }
+        }
     }
 
     fun setWords() {
@@ -42,7 +63,7 @@ class Game(val nbPlayers: Int): Serializable {
         shuffle(roles)
     }
 
-    fun getWinner() {
+    fun getWinner() : Role? {
         var mrWhiteAlive = false
         var undercoverAlive = false
         var nbInnocentAlive = 0
@@ -62,12 +83,12 @@ class Game(val nbPlayers: Int): Serializable {
             }
         }
         if (!mrWhiteAlive && !undercoverAlive) {
-            winner = Innocent
+            return Innocent
         } else if (mrWhiteAlive && nbInnocentAlive <= 1) {
-            winner = MrWhite
+            return MrWhite
         } else if (undercoverAlive && nbInnocentAlive <= 1) {
-            winner = MrWhite
+            return MrWhite
         }
-
+        return null
     }
 }

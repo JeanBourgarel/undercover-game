@@ -6,7 +6,7 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.myundercover.fragments.HomeFragment"
-        android:label="GameFragment" >
+        android:label="HomeFragment" >
         <action
             android:id="@+id/launch_selectPlayersFragment"
             app:destination="@id/selectPlayersFragment" />
@@ -29,6 +29,9 @@
         <action
             android:id="@+id/launch_cardFragment"
             app:destination="@id/cardFragment" />
+        <action
+            android:id="@+id/launch_homeFragment"
+            app:destination="@id/homeFragment" />
     </fragment>
     <fragment
         android:id="@+id/cardFragment"

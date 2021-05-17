@@ -13,4 +13,8 @@
     <string name="game_has_started">Game has started</string>
     <string name="player">Player</string>
     <string name="choose_a_card">choose a card</string>
+    <string name="kill_a_player">Kill a player</string>
+    <string name="kill">kill</string>
+    <string name="cancel">cancel</string>
+    <string name="are_you_sure_you_want_to_kill_this_player">Are you sure you want to kill this player ?</string>
 </resources>
