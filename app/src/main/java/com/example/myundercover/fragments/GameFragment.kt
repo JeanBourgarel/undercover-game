@@ -48,9 +48,14 @@ class GameViewModel : AndroidDataFlow() {
         }
     }
 
-    fun clickOnPlayerCard(holder: PlayerCardHolder) {
-        action {
-            sendEvent(GameEvent.SelectPlayerCard(holder))
+    fun clickOnCard(holder: PlayerCardHolder) = action { currentState ->
+        when (currentState) {
+            is SelectCards -> {
+                sendEvent(GameEvent.SelectNewCard(holder))
+            }
+            is Start -> {
+                sendEvent(GameEvent.SelectPlayerCard(holder))
+            }
         }
     }
 
@@ -107,6 +112,7 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
             }
         }
         onEvents(GameViewModel) { event ->
+            Toast.makeText(context, event.toString(), Toast.LENGTH_SHORT).show()
             when (event) {
                 is GameEvent.SelectNewCard -> {
                     if (event.holder.name.text.isBlank()) {
@@ -141,18 +147,7 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
     }
 
     override fun clickOnCard(holder: PlayerCardHolder) {
-        Toast.makeText(context, "click on card", Toast.LENGTH_SHORT).show()
-
-        onStates(GameViewModel) { state ->
-            when (state) {
-                is SelectCards -> {
-                    GameViewModel.clickOnNewCard(holder)
-                }
-                is Start -> {
-                    GameViewModel.clickOnPlayerCard(holder)
-                }
-            }
-        }
+        GameViewModel.clickOnCard(holder)
     }
 
     override fun clickOnOk(updatedGame: Game, cardHolder: PlayerCardHolder, playerName: String) {
