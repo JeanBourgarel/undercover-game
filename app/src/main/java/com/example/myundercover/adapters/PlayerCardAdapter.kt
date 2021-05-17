@@ -31,7 +31,7 @@ class PlayerCardAdapter(val playerCards: ArrayList<PlayerCard>, val context: Con
 
         holder.icon.setImageResource(playerCard.icon!!)
         holder.name.text = playerCard.name
-        holder.itemView.setOnClickListener {
+        holder.view.setOnClickListener {
             holder.listener.clickOnCard(holder)
         }
     }
@@ -42,6 +42,6 @@ class PlayerCardAdapter(val playerCards: ArrayList<PlayerCard>, val context: Con
 }
 
 class PlayerCardHolder(val view: View, val context: Context, val listener: PlayerCardAdapter.ICardRecycler) : RecyclerView.ViewHolder(view), Serializable {
-    var icon = itemView.findViewById<ImageView>(R.id.icon_player_card)
-    var name = itemView.findViewById<TextView>(R.id.player_name)
+    var icon = view.findViewById<ImageView>(R.id.icon_player_card)
+    var name = view.findViewById<TextView>(R.id.player_name)
 }

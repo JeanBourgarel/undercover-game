@@ -17,7 +17,9 @@ import com.example.myundercover.adapters.PlayerCardAdapter
 import com.example.myundercover.adapters.PlayerCardHolder
 import com.example.myundercover.databinding.FragmentGameBinding
 import io.uniflow.android.AndroidDataFlow
+import io.uniflow.android.livedata.onEvents
 import io.uniflow.android.livedata.onStates
+import io.uniflow.core.flow.data.UIEvent
 import io.uniflow.core.flow.data.UIState
 import org.koin.android.ext.android.inject
 
@@ -30,6 +32,14 @@ data class NewTurn(val playerTurn: Player) : GameState()
 data class killPlayer(val player: Player) : GameState()
 
 
+sealed class GameEvent : UIEvent() {
+    data class SelectNewCard(val holder: PlayerCardHolder) : GameEvent()
+    data class SelectPlayerCard(val holder: PlayerCardHolder) : GameEvent()
+    data class Start(val game: Game) : GameEvent()
+    data class Success(val location: String) : GameEvent()
+    data class Failed(val location: String, val error: Throwable? = null) : GameEvent()
+}
+
 class GameViewModel : AndroidDataFlow() {
 
     init {
@@ -38,22 +48,15 @@ class GameViewModel : AndroidDataFlow() {
         }
     }
 
-    fun clickOnCard(player: Player) {
+    fun clickOnPlayerCard(holder: PlayerCardHolder) {
         action {
-            setState(ShowCard(player))
+            sendEvent(GameEvent.SelectPlayerCard(holder))
         }
     }
 
-    fun selectPlayerToKill(player: Player) {
-        //display card are u sure
+    fun clickOnNewCard(holder: PlayerCardHolder) {
         action {
-            killPlayer(player)
-        }
-    }
-
-    fun endGame(game: Game) {
-        action {
-            setState(End(game.winner))
+            sendEvent(GameEvent.SelectNewCard(holder))
         }
     }
 
@@ -65,6 +68,7 @@ class GameViewModel : AndroidDataFlow() {
 
     fun startGame(game: Game) {
         action {
+            //sendEvent(GameEvent.Start(game))
             setState(Start)
         }
     }
@@ -102,6 +106,22 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
                 }
             }
         }
+        onEvents(GameViewModel) { event ->
+            when (event) {
+                is GameEvent.SelectNewCard -> {
+                    if (event.holder.name.text.isBlank()) {
+                        val args = Bundle()
+                        args.putSerializable("cardHolder", event.holder)
+                        args.putSerializable("game", game)
+                        dialog.arguments = args
+                        dialog.show(childFragmentManager, "cardFragment")
+                    }
+                }
+                is GameEvent.SelectPlayerCard -> {
+                    Toast.makeText(context, "Kill " + event.holder.name.text.toString() + " ?", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -121,19 +141,15 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
     }
 
     override fun clickOnCard(holder: PlayerCardHolder) {
+        Toast.makeText(context, "click on card", Toast.LENGTH_SHORT).show()
+
         onStates(GameViewModel) { state ->
             when (state) {
                 is SelectCards -> {
-                    if (holder.name.text.isBlank()) {
-                        val args = Bundle()
-                        args.putSerializable("cardHolder", holder)
-                        args.putSerializable("game", game)
-                        dialog.arguments = args
-                        dialog.show(childFragmentManager, "cardFragment")
-                    }
+                    GameViewModel.clickOnNewCard(holder)
                 }
                 is Start -> {
-                    Toast.makeText(context, "Kill " + holder.name.text.toString() + " ?", Toast.LENGTH_SHORT).show()
+                    GameViewModel.clickOnPlayerCard(holder)
                 }
             }
         }
