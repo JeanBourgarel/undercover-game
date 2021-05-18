@@ -110,7 +110,8 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         playerNb = args.nbPlayers
-        game = Game(args.nbPlayers, requireContext())
+        game = Game(args.nbPlayers)
+        game.setWords(requireContext())
         onStates(GameViewModel) { state ->
             when (state) {
                 is CardSelection -> {

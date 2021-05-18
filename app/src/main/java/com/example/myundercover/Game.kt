@@ -7,7 +7,7 @@ import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class Game(val nbPlayers: Int, val context: Context): Serializable {
+class Game(val nbPlayers: Int): Serializable {
     var players: MutableList<Player> = mutableListOf()
     lateinit var secretWord: String
     lateinit var fakeWord: String
@@ -15,7 +15,6 @@ class Game(val nbPlayers: Int, val context: Context): Serializable {
 
     init {
         setRoles()
-        setWords(context)
     }
 
     fun isPlayerAlive(playerName: String): Boolean {
