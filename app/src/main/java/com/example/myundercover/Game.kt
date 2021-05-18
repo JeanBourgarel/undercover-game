@@ -1,9 +1,13 @@
 package com.example.myundercover
 
+import android.content.Context
 import java.io.Serializable
 import java.util.Collections.shuffle
+import android.util.Log
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
-class Game(val nbPlayers: Int): Serializable {
+class Game(val nbPlayers: Int, val context: Context): Serializable {
     var players: MutableList<Player> = mutableListOf()
     lateinit var secretWord: String
     lateinit var fakeWord: String
@@ -11,7 +15,7 @@ class Game(val nbPlayers: Int): Serializable {
 
     init {
         setRoles()
-        setWords()
+        setWords(context)
     }
 
     fun isPlayerAlive(playerName: String): Boolean {
@@ -21,6 +25,15 @@ class Game(val nbPlayers: Int): Serializable {
             }
         }
         return true
+    }
+
+    fun getFirstPlayerTurn(): Player? {
+        for (player in players) {
+            if (player.role == Innocent || player.role == Undercover) {
+                return player
+            }
+        }
+        return null
     }
 
     fun getRoleByName(playerName: String): Role? {
@@ -48,9 +61,14 @@ class Game(val nbPlayers: Int): Serializable {
         }
     }
 
-    fun setWords() {
-        secretWord = "Dog"
-        fakeWord = "Cat"
+    fun setWords(context: Context) {
+        val jsonFileString = getJsonDataFromAsset(context, "secret_words.json")
+        val listWordsToGuessType = object : TypeToken<List<WordToGuess>>() {}.type
+        val wordsToGuess: MutableList<WordToGuess> = Gson().fromJson(jsonFileString, listWordsToGuessType)
+
+        shuffle(wordsToGuess)
+        secretWord = wordsToGuess[0].secretWord
+        fakeWord = wordsToGuess[0].fakeWord
     }
 
     private fun setRoles() {

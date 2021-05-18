@@ -23,7 +23,7 @@ import io.uniflow.core.flow.data.UIState
 import org.koin.android.ext.android.inject
 
 sealed class GameState : UIState()
-object Started : GameState()
+data class Started(val firstPlayer: Player) : GameState()
 data class CardSelection(val playerNb: Int) : GameState()
 data class Ended(val winnerRole: Role) : GameState()
 
@@ -81,9 +81,9 @@ class GameViewModel : AndroidDataFlow() {
         }
     }
 
-    fun startGame() {
+    fun startGame(firstPlayer: Player) {
         action {
-            setState(Started)
+            setState(Started(firstPlayer))
         }
     }
 }
@@ -97,7 +97,6 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
     private val cardDialog = CardFragment(this)
     private val killPlayerCardDialog = KillPlayerCardFragment(this)
     private var playerNb = 0
-
     private var recyclerViewPlayerCards: RecyclerView? = null
     private var gridLayoutManager: GridLayoutManager? = null
     private var arrayListPlayerCard: ArrayList<PlayerCard>? = null
@@ -111,7 +110,7 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         playerNb = args.nbPlayers
-        game = Game(args.nbPlayers)
+        game = Game(args.nbPlayers, requireContext())
         onStates(GameViewModel) { state ->
             when (state) {
                 is CardSelection -> {
@@ -119,8 +118,8 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
                     binding.nbPlayer.text = newText
                 }
                 is Started -> {
-                    binding.nbPlayer.text = getString(R.string.game_has_started)
-                    Toast.makeText(context, "Game can start", Toast.LENGTH_SHORT).show()
+                    binding.nbPlayer.text = getString(R.string.game_has_started, state.firstPlayer.name)
+                    Toast.makeText(context, "Game can start, " + state.firstPlayer.name + " starts", Toast.LENGTH_SHORT).show()
                 }
                 is Ended -> {
                     when (state.winnerRole) {
@@ -197,7 +196,10 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
         GameViewModel.playerAdded(cardHolder, playerName)
         game = updatedGame
         if (game.roles.size == 0) {
-            GameViewModel.startGame()
+            val firstPlayer = game.getFirstPlayerTurn()
+            if (firstPlayer != null) {
+                GameViewModel.startGame(firstPlayer)
+            }
         } else {
             GameViewModel.selectCards(game.players.size + 1)
         }
