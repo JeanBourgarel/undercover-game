@@ -1,6 +1,5 @@
 package com.example.myundercover.fragments
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -22,18 +21,11 @@ import io.uniflow.android.livedata.onStates
 import io.uniflow.core.flow.data.UIEvent
 import io.uniflow.core.flow.data.UIState
 import org.koin.android.ext.android.inject
-import androidx.navigation.fragment.findNavController
-import com.example.myundercover.fragments.HomeFragmentDirections
-import com.example.myundercover.databinding.FragmentHomeBinding
-import org.koin.android.ext.android.inject
-import splitties.views.onClick
-
 
 sealed class GameState : UIState()
 object Started : GameState()
 data class CardSelection(val playerNb: Int) : GameState()
 data class Ended(val winnerRole: Role) : GameState()
-
 
 sealed class GameEvent : UIEvent() {
     data class SelectNewCard(val holder: PlayerCardHolder) : GameEvent()
@@ -89,7 +81,7 @@ class GameViewModel : AndroidDataFlow() {
         }
     }
 
-    fun startGame(game: Game) {
+    fun startGame() {
         action {
             setState(Started)
         }
@@ -98,13 +90,13 @@ class GameViewModel : AndroidDataFlow() {
 
 class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFragment.ISecretWord, KillPlayerCardFragment.IKillPlayer {
 
-    val GameViewModel: GameViewModel by inject()
+    private val GameViewModel: GameViewModel by inject()
     private val args by navArgs<GameFragmentArgs>()
-    lateinit var binding: FragmentGameBinding
-    lateinit var game: Game
-    val cardDialog = CardFragment(this)
-    val killPlayerCardDialog = KillPlayerCardFragment(this)
-    var playerNb = 0
+    private lateinit var binding: FragmentGameBinding
+    private lateinit var game: Game
+    private val cardDialog = CardFragment(this)
+    private val killPlayerCardDialog = KillPlayerCardFragment(this)
+    private var playerNb = 0
 
     private var recyclerViewPlayerCards: RecyclerView? = null
     private var gridLayoutManager: GridLayoutManager? = null
@@ -205,7 +197,7 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
         GameViewModel.playerAdded(cardHolder, playerName)
         game = updatedGame
         if (game.roles.size == 0) {
-            GameViewModel.startGame(game)
+            GameViewModel.startGame()
         } else {
             GameViewModel.selectCards(game.players.size + 1)
         }
