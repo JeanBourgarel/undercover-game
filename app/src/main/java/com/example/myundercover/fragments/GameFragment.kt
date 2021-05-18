@@ -38,7 +38,7 @@ data class Ended(val winnerRole: Role) : GameState()
 sealed class GameEvent : UIEvent() {
     data class SelectNewCard(val holder: PlayerCardHolder) : GameEvent()
     data class SelectPlayerCard(val holder: PlayerCardHolder) : GameEvent()
-    data class PlayerKilled(val role: Role) : GameEvent()
+    data class PlayerKilled(val holder: PlayerCardHolder, val role: Role) : GameEvent()
     data class PlayerAdded(val holder: PlayerCardHolder, val playerName: String) : GameEvent()
 }
 
@@ -50,13 +50,17 @@ class GameViewModel : AndroidDataFlow() {
         }
     }
 
-    fun clickOnCard(holder: PlayerCardHolder) = action { currentState ->
+    fun clickOnCard(holder: PlayerCardHolder, game: Game) = action { currentState ->
         when (currentState) {
             is CardSelection -> {
-                sendEvent(GameEvent.SelectNewCard(holder))
+                if (holder.name.text.isBlank()) {
+                    sendEvent(GameEvent.SelectNewCard(holder))
+                }
             }
             is Started -> {
-                sendEvent(GameEvent.SelectPlayerCard(holder))
+                if (game.isPlayerAlive(holder.name.text.toString())) {
+                    sendEvent(GameEvent.SelectPlayerCard(holder))
+                }
             }
         }
     }
@@ -67,9 +71,9 @@ class GameViewModel : AndroidDataFlow() {
         }
     }
 
-    fun killPlayer(role: Role) {
+    fun killPlayer(holder: PlayerCardHolder, role: Role) {
         action {
-            sendEvent(GameEvent.PlayerKilled(role))
+            sendEvent(GameEvent.PlayerKilled(holder, role))
         }
     }
 
@@ -145,13 +149,11 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
         onEvents(GameViewModel) { event ->
             when (event) {
                 is GameEvent.SelectNewCard -> {
-                    if (event.holder.name.text.isBlank()) {
-                        val args = Bundle()
-                        args.putSerializable("cardHolder", event.holder)
-                        args.putSerializable("game", game)
-                        cardDialog.arguments = args
-                        cardDialog.show(childFragmentManager, "cardFragment")
-                    }
+                    val args = Bundle()
+                    args.putSerializable("cardHolder", event.holder)
+                    args.putSerializable("game", game)
+                    cardDialog.arguments = args
+                    cardDialog.show(childFragmentManager, "cardFragment")
                 }
                 is GameEvent.SelectPlayerCard -> {
                     val args = Bundle()
@@ -164,6 +166,7 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
                     event.holder.name.text = event.playerName
                 }
                 is GameEvent.PlayerKilled -> {
+                    event.holder.icon.setImageResource(R.mipmap.ic_dead)
                     when (event.role) {
                         is Innocent -> {
                             Toast.makeText(context, "An innocent has been killed", Toast.LENGTH_SHORT).show()
@@ -195,7 +198,7 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
     }
 
     override fun clickOnCard(holder: PlayerCardHolder) {
-        GameViewModel.clickOnCard(holder)
+        GameViewModel.clickOnCard(holder, game)
     }
 
     override fun clickOnOk(updatedGame: Game, cardHolder: PlayerCardHolder, playerName: String) {
@@ -210,17 +213,14 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
     }
 
     override fun killPlayer(cardHolder: PlayerCardHolder) {
-        if (game.isPlayerAlive(cardHolder.name.text.toString())) {
-            val role = game.getRoleByName(cardHolder.name.text.toString())
-            game.killPlayerByName(cardHolder.name.text.toString())
-            if (role != null) {
-                GameViewModel.killPlayer(role)
-            }
-            cardHolder.icon.setImageResource(R.mipmap.ic_dead)
-            val winner = game.getWinner()
-            if (winner != null) {
-                GameViewModel.endGame(winner)
-            }
+        val role = game.getRoleByName(cardHolder.name.text.toString())
+        game.killPlayerByName(cardHolder.name.text.toString())
+        if (role != null) {
+            GameViewModel.killPlayer(cardHolder, role)
+        }
+        val winner = game.getWinner()
+        if (winner != null) {
+            GameViewModel.endGame(winner)
         }
     }
 }
