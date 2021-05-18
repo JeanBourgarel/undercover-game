@@ -2,7 +2,7 @@ package com.example.myundercover
 
 import android.app.Application
 import com.example.myundercover.fragments.CardViewModel
-import com.example.myundercover.fragments.GameViewModel
+import com.example.myundercover.game.GameViewModel
 import com.example.myundercover.fragments.HomeViewModel
 import com.example.myundercover.fragments.KillPlayerCardViewModel
 import org.koin.android.ext.koin.androidContext

@@ -1,8 +1,7 @@
 package com.example.myundercover
 
+import com.example.myundercover.game.Game
 import junit.framework.TestCase
-import org.junit.Test
-import org.junit.Assert.*
 
 class GameTest : TestCase() {
 

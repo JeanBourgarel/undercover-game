@@ -6,11 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.example.myundercover.PlayerCard
+import com.example.myundercover.card.PlayerCard
 import com.example.myundercover.R
-import com.example.myundercover.fragments.GameViewModel
 import java.io.Serializable
 
 

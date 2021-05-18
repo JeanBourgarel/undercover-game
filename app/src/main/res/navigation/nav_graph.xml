@@ -21,7 +21,7 @@
     </fragment>
     <fragment
         android:id="@+id/gameFragment"
-        android:name="com.example.myundercover.fragments.GameFragment"
+        android:name="com.example.myundercover.game.GameFragment"
         android:label="GameFragment" >
         <argument
             android:name="nb_players"

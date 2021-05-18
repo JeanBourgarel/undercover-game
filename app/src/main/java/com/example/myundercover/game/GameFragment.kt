@@ -1,4 +1,4 @@
-package com.example.myundercover.fragments
+package com.example.myundercover.game
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,7 +14,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myundercover.*
 import com.example.myundercover.adapters.PlayerCardAdapter
 import com.example.myundercover.adapters.PlayerCardHolder
+import com.example.myundercover.card.PlayerCard
 import com.example.myundercover.databinding.FragmentGameBinding
+import com.example.myundercover.fragments.*
 import io.uniflow.android.AndroidDataFlow
 import io.uniflow.android.livedata.onEvents
 import io.uniflow.android.livedata.onStates
@@ -88,7 +90,8 @@ class GameViewModel : AndroidDataFlow() {
     }
 }
 
-class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFragment.ISecretWord, KillPlayerCardFragment.IKillPlayer {
+class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFragment.ISecretWord,
+    KillPlayerCardFragment.IKillPlayer {
 
     private val GameViewModel: GameViewModel by inject()
     private val args by navArgs<GameFragmentArgs>()
@@ -123,7 +126,11 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
                     Toast.makeText(context, getString(R.string.game_has_started, state.firstPlayer.name), Toast.LENGTH_SHORT).show()
                 }
                 is Ended -> {
-                    findNavController().navigate(GameFragmentDirections.launchEndScreenFragment(state.winnerRole))
+                    findNavController().navigate(
+                        GameFragmentDirections.launchEndScreenFragment(
+                            state.winnerRole
+                        )
+                    )
                 }
             }
         }

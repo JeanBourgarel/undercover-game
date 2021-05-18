@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import com.example.myundercover.Game
 import com.example.myundercover.adapters.PlayerCardHolder
 import com.example.myundercover.databinding.FragmentKillPlayerCardBinding
 import io.uniflow.android.AndroidDataFlow

@@ -1,16 +1,12 @@
 package com.example.myundercover.fragments
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import com.example.myundercover.Game
-import com.example.myundercover.adapters.PlayerCardAdapter
+import com.example.myundercover.game.Game
 import com.example.myundercover.adapters.PlayerCardHolder
 import com.example.myundercover.databinding.FragmentCardBinding
 import io.uniflow.android.AndroidDataFlow

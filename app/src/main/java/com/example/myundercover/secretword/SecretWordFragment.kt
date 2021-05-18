@@ -5,15 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.example.myundercover.*
-import com.example.myundercover.adapters.PlayerCardAdapter
 import com.example.myundercover.adapters.PlayerCardHolder
 import com.example.myundercover.databinding.FragmentSecretWordBinding
+import com.example.myundercover.game.Game
 import io.uniflow.android.AndroidDataFlow
 import org.koin.android.ext.android.inject
-import splitties.views.onClick
 
 class SecretWordViewModel: AndroidDataFlow() {
 
