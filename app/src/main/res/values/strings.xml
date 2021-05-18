@@ -17,4 +17,6 @@
     <string name="kill">kill</string>
     <string name="cancel">cancel</string>
     <string name="are_you_sure_you_want_to_kill_this_player">Are you sure you want to kill this player ?</string>
+    <string name="the_innocents_has_won">The innocents has won the game</string>
+    <string name="the_infiltrates_has_won">The infiltrates has won the game</string>
 </resources>
