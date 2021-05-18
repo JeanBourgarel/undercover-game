@@ -31,22 +31,15 @@ import splitties.views.onClick
 
 sealed class GameState : UIState()
 object Started : GameState()
-object InnocentWin: GameState()
-object InfiltrateWin: GameState()
 data class CardSelection(val playerNb: Int) : GameState()
 data class Ended(val winnerRole: Role) : GameState()
-data class ShowCard(val player: Player) : GameState()
-data class NewTurn(val playerTurn: Player) : GameState()
 
 
 sealed class GameEvent : UIEvent() {
     data class SelectNewCard(val holder: PlayerCardHolder) : GameEvent()
     data class SelectPlayerCard(val holder: PlayerCardHolder) : GameEvent()
-    data class KillPlayer(val holder: PlayerCardHolder) : GameEvent()
     data class PlayerKilled(val role: Role) : GameEvent()
-    data class InnocentKilled(val playerName: String) : GameEvent()
-    data class UndercoverKilled(val playerName: String) : GameEvent()
-    data class MrWhiteKilled(val playerName: String) : GameEvent()
+    data class PlayerAdded(val holder: PlayerCardHolder, val playerName: String) : GameEvent()
 }
 
 class GameViewModel : AndroidDataFlow() {
@@ -65,6 +58,12 @@ class GameViewModel : AndroidDataFlow() {
             is Started -> {
                 sendEvent(GameEvent.SelectPlayerCard(holder))
             }
+        }
+    }
+
+    fun playerAdded(holder: PlayerCardHolder, playerName: String) {
+        action {
+            sendEvent(GameEvent.PlayerAdded(holder, playerName))
         }
     }
 
@@ -125,6 +124,7 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
                 }
                 is Started -> {
                     binding.nbPlayer.text = getString(R.string.game_has_started)
+                    Toast.makeText(context, "Game can start", Toast.LENGTH_SHORT).show()
                 }
                 is Ended -> {
                     when (state.winnerRole) {
@@ -159,6 +159,9 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
                     args.putSerializable("game", game)
                     killPlayerCardDialog.arguments = args
                     killPlayerCardDialog.show(childFragmentManager, "killPlayerCardFragment")
+                }
+                is GameEvent.PlayerAdded -> {
+                    event.holder.name.text = event.playerName
                 }
                 is GameEvent.PlayerKilled -> {
                     when (event.role) {
@@ -196,11 +199,10 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
     }
 
     override fun clickOnOk(updatedGame: Game, cardHolder: PlayerCardHolder, playerName: String) {
-        cardHolder.name.text = playerName
+        GameViewModel.playerAdded(cardHolder, playerName)
         game = updatedGame
         if (game.roles.size == 0) {
             GameViewModel.startGame(game)
-            Toast.makeText(context, "Game can start", Toast.LENGTH_SHORT).show()
         } else {
             GameViewModel.selectCards(game.players.size + 1)
         }
