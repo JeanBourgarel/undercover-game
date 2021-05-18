@@ -30,11 +30,23 @@
             android:id="@+id/launch_cardFragment"
             app:destination="@id/cardFragment" />
         <action
-            android:id="@+id/launch_homeFragment"
-            app:destination="@id/homeFragment" />
+            android:id="@+id/launch_endScreenFragment"
+            app:destination="@id/endScreenFragment" />
     </fragment>
     <fragment
         android:id="@+id/cardFragment"
         android:name="com.example.myundercover.fragments.CardFragment"
         android:label="CardFragment" />
+    <fragment
+        android:id="@+id/endScreenFragment"
+        android:name="com.example.myundercover.fragments.EndScreenFragment"
+        android:label="EndScreenFragment" >
+
+        <action
+            android:id="@+id/launch_selectPlayersFragment"
+            app:destination="@id/selectPlayersFragment" />
+        <argument
+            android:name="winner"
+            app:argType="com.example.myundercover.Role" />
+    </fragment>
 </navigation>

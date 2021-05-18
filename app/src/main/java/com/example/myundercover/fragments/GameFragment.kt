@@ -122,18 +122,7 @@ class GameFragment : Fragment(), PlayerCardAdapter.ICardRecycler, SecretWordFrag
                     Toast.makeText(context, getString(R.string.game_has_started, state.firstPlayer.name), Toast.LENGTH_SHORT).show()
                 }
                 is Ended -> {
-                    when (state.winnerRole) {
-                        is Innocent -> {
-                            Toast.makeText(context, getString(R.string.the_innocents_has_won), Toast.LENGTH_SHORT).show()
-                        }
-                        is Undercover -> {
-                            Toast.makeText(context, getString(R.string.the_infiltrates_has_won), Toast.LENGTH_SHORT).show()
-                        }
-                        is MrWhite -> {
-                            Toast.makeText(context, getString(R.string.the_infiltrates_has_won), Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                    findNavController().navigate(GameFragmentDirections.launchHomeFragment())
+                    findNavController().navigate(GameFragmentDirections.launchEndScreenFragment(state.winnerRole))
                 }
             }
         }

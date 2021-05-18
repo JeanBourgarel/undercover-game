@@ -1,6 +1,8 @@
 package com.example.myundercover
 
-sealed class Role
+import java.io.Serializable
+
+sealed class Role: Serializable
 object Innocent: Role()
 object MrWhite: Role()
 object Undercover: Role()
