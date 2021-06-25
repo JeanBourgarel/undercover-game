@@ -6,7 +6,7 @@
         android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_unknown_face"
-        android:label="@string/app_name"
+        android:label="My Undercover"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyUndercover">

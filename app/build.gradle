@@ -2,7 +2,9 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'androidx.navigation.safeargs'
+    id 'jacoco'
 }
+
 
 android {
     compileSdkVersion 30
@@ -22,10 +24,17 @@ android {
         viewBinding true
     }
 
+/*    def BASE_URL = "https://api.openweathermap.org/data/2.5"
+
+    flavorDimensions "dev"*/
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            testCoverageEnabled true
         }
     }
     compileOptions {
